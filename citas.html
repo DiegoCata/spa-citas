@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agendar Cita</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+</head>
+
+<body class="spa-bg relative min-h-screen flex flex-col items-center p-4">
+
+    <!-- Capa translúcida blanca encima del fondo -->
+    <div class="absolute inset-0 bg-white/ backdrop-blur-sm z-0"></div>
+
+    <!-- Contenido principal -->
+    <div class="relative z-10 w-full max-w-6xl">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 my-6 text-center">
+            🧖‍♀️ Elige tu Horario de Bienestar
+        </h2>
+
+        <div id="horarios" class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4"></div>
+    </div>
+
+    <!-- Modal Fancy de Reservar Horario -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white/60 backdrop-blur-lg rounded-2xl px-6 py-4 text-center shadow-xl animate-fade-overlay">
+
+            <h2 class="text-2xl font-bold text-pink-600 mb-2">✨ Reservar turno ✨</h2>
+            <p class="text-gray-700 mb-4 text-sm" id="horaSeleccionada"></p>
+
+            <input type="text" id="cedulaCliente" placeholder="💳 Tu cédula"
+                class="w-full border border-pink-400 rounded-full px-4 py-2 mb-3 text-center focus:outline-none focus:ring-2 focus:ring-pink-300" />
+
+            <input type="text" id="nombreCliente" placeholder="💖 Tu nombre"
+                class="w-full border border-pink-300 rounded-full p-2 mb-4 text-center focus:outline-none focus:ring-2 focus:ring-pink-400" />
+
+            <div class="flex justify-center gap-4 mt-4">
+                <button onclick="cerrarModal()"
+                    class="flex items-center gap-2 px-5 py-2 rounded-full border border-gray-400 text-gray-700 font-medium shadow-sm hover:bg-gray-100 transition">
+                    ❌ Cancelar
+                </button>
+
+                <button onclick="confirmarReserva()"
+                    class="flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-pink-500 via-pink-400 to-pink-500 text-white font-semibold shadow-md hover:scale-105 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Confirmar
+                </button>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+    <!-- Modal de Éxito -->
+    <div id="modalExito" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white/40 backdrop-blur-lg p-6 rounded-2xl shadow-xl text-center max-w-md">
+
+            <h3 class="text-3xl font-bold text-green-600 mb-2">🎉 ¡Reserva exitosa!</h3>
+            <p class="text-gray-700 text-sm mb-2">Tu cita ha sido registrada exitosamente.</p>
+
+            <p class="text-sm sm:text-base text-pink-600 font-semibold mt-2">
+                ⚠️ Recuerda que debes efectuar el pago en las siguientes 48 horas, caso contrario tu turno será
+                liberado.
+            </p>
+
+            <!-- Línea divisoria -->
+            <div class="border-t border-gray-300 my-4"></div>
+
+            <!-- Datos Bancarios -->
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <img src="images/logoPichincha.png" alt="Banco Pichincha" class="w-5 h-10 object-contain" />
+                <p class="text-gray-800 font-semibold text-sl text-base">Banco Pichincha</p>
+              </div>
+            <p class="text-gray-700 text-sl mb-1">Cuenta de Ahorros:</p>
+            <p class="text-gray-900 font-semibold text-sl mb-2">Vanessa Delgado</p>
+
+            <p class="text-gray-800 font-semibold text-sl">🔢 Número de Cuenta: 2207698973</p>
+
+            <!-- Botón -->
+            <button onclick="cerrarModalExito()"
+                class="mt-6 px-6 py-2 bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white font-semibold rounded-full hover:scale-105 transition-transform">
+                Aceptar
+            </button>
+
+        </div>
+    </div>
+
+
+
+    <!-- Modal de Error -->
+    <div id="modalError" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white/40 backdrop-blur-lg p-6 rounded-xl shadow-xl text-center w-80">
+            <h3 class="text-2xl font-bold text-red-500 mb-2">😔 Turno lleno</h3>
+            <p id="modalErrorMensaje" class="text-gray-700 text-sm">...</p>
+            <button onclick="cerrarModalError()"
+                class="mt-4 px-4 py-2 bg-gradient-to-r from-rose-400 via-pink-500 to-fuchsia-500 text-white rounded-full hover:scale-105 transition-transform">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Error Cédula -->
+    <div id="modalErrorCedula" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white/40 backdrop-blur-lg p-6 rounded-xl shadow-xl text-center w-80">
+            <h3 class="text-2xl font-bold text-red-500 mb-2">😔 Cédula incorrecta</h3>
+            <p id="modalErrorMensajeCedula" class="text-gray-700 text-sm">...</p>
+            <button onclick="cerrarModalErrorCedula()"
+                class="mt-4 px-4 py-2 bg-gradient-to-r from-rose-400 via-pink-500 to-fuchsia-500 text-white rounded-full hover:scale-105 transition-transform">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Modal de duplicado -->
+    <div id="modalDuplicado" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl shadow-xl text-center w-80">
+            <h3 class="text-xl font-semibold text-yellow-600 mb-2">⚠️ Reserva ya existente</h3>
+            <p class="text-gray-700 text-sm">Ya has reservado con esa cédula 🌸</p>
+            <button onclick="cerrarModalDuplicado()"
+                class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>

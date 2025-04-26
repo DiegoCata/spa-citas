@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administrador de Citas - Spa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  <style>
+    /* 👑 Corrección para evitar desplazamiento lateral */
+    body {
+      overflow-x: hidden;
+    }
+    #contenidoAdmin {
+      max-width: 100%;
+    }
+  </style>
+</head>
+
+<body class="transition-all duration-500">
+
+  <div id="contenidoAdmin" class="transition-all duration-500">
+    <div class="bg-gradient-to-b from-pink-100 via-pink-200 to-pink-300 min-h-screen flex flex-col items-center p-6">
+      <h1 class="text-3xl font-bold text-pink-600 mb-6">🌸 Administrador de Citas</h1>
+
+      <div class="flex gap-4 mb-6">
+        <button onclick="generarReportePDF()"
+          class="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-semibold shadow-md transition">
+          📄 Generar Reporte PDF
+        </button>
+      </div>
+
+      <div class="mb-4 w-full max-w-4xl">
+        <input id="buscarCedula" type="text" placeholder="🔎 Buscar por cédula..."
+          class="w-full p-2 rounded-full border border-pink-400 focus:ring-2 focus:ring-pink-300 focus:outline-none text-center" />
+      </div>
+
+      <div id="citas" class="w-full max-w-4xl grid grid-cols-1 gap-4">
+      </div>
+
+      <!-- Modal para cambiar horario -->
+      <div id="modalCambio" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+        <div class="bg-white/90 backdrop-blur-lg p-6 rounded-xl shadow-xl text-center w-80">
+          <h3 class="text-xl font-semibold text-pink-600 mb-4">🕐 Cambiar horario</h3>
+          <select id="nuevoHorario" class="w-full p-2 rounded border text-center mb-4"></select>
+          <div class="flex justify-center gap-3">
+            <button onclick="cerrarCambioHorario()"
+              class="px-4 py-2 rounded-full border border-gray-300 text-gray-600">Cancelar</button>
+            <button onclick="confirmarCambioHorario()"
+              class="px-4 py-2 rounded-full bg-pink-500 text-white font-semibold hover:scale-105 transition">Actualizar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚀 Lógica separada -->
+  <script type="module" src="admin.js"></script>
+
+</body>
+
+</html>
